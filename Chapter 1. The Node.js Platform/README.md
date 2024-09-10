@@ -79,4 +79,7 @@ It is trivial to notice that a web server that is implemented using blocking I/O
 This way, a thread blocked on an I/O operation will not impact the availability of the other connections, because they are handled in seperate threads.
 
 The following illustrates this scenario:
-
+<figure>
+  <img src="images/01.png" width=500px>
+  <figcaption>Data structures hierarchy</figcaption>
+</figure>
