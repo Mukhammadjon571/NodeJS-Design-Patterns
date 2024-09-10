@@ -40,3 +40,43 @@ By adopting these principles, Node.js elevates the **Don't Repeat Yourself (DRY)
 ---
 
 Node.js's approach to small cores and modules is foundational to its success and versatility. Understanding these principles will help you make the most of the Node.js ecosystem, whether you're developing server-side solutions or front-end components. Keep these philosophies in mind as you build your next project with Node.js!
+
+---
+
+## Simplicity and pragmatism
+
+Have you ever heard of the **Keep It Simple, Stupid (KISS)** principle? Richard
+P. Gabriel, a prominent computer scientist, coined the term "worse is better" to describe the model whereby less and simpler functionality is a good design choice for software. In his essay The Rise of "Worse is Better" he says:
+
+```
+The Design must be simple, both in implementation and interface. It is more important for the implementation
+to be simple then the interface. Simplicity is the most important consideration in a design.
+```
+
+Designing simple, as opposed to perfect, fully featured software is a good practice for several reasons: it takes less effort to implement, it allows shipping faster
+with fewer resources, it's easier to adapt, and, finally, it's easier to maintain and understand. The positive effects of these factors encourage community contributions and allow the software itself to grow and improve.
+
+--- 
+
+## How Node.js works
+
+We will gain an understanding of how Node.js works internally and be introduced to the reactor pattern, which is the heart of the asynchronous nature or Node.js. We will go through the main concepts behind the pattern, such as the single-threaded architecture and the non-blocking I/O, and you will see how this creates the foundation for the entire Node.js platform.
+
+## I/O is slow 
+I/O (short for input/output) is definitely the slowest among the fundamental operations of a computer. Accessing the RAM is in the order of nanoseconds (10E-9 seconds), while accessing data on the disk or the network is in the order of milliseconds (10E-3 seconds). The same applies to the bandwidth. RAM has a transfer rate consistently in the order of GB/s, while the disk or network varies from MB/s to optimistically GB/s. I/O is usually not expensive in terms of CPU, but it adds a delay between the moment the request is sent to the device and the moment the operation completes. On top of that, we have to consider the human factor. In fact, in many ciccumstances, the input of an application comes from a real person - a mouse click, for example - so the speed and frequency of I/O doesn`t only depend on technical aspects and it can be many orders of magnitude slower then the disk or network.
+
+## Blocking I/O
+In Traditional blocking I/O programming, the function call corresponding to an I/O request will block the execution of the thread until the operation completes. This can range from a few milliseconds, in the case of disk access, to minutes or even more, in the case of data being generated from user actions, such as pressing a key, the following pseudocode shows a typical blocking thread performed against a socket:
+```
+// blocks the thread until the data is available
+  data = socket.read()
+// data is available
+  print(data)
+```
+
+It is trivial to notice that a web server that is implemented using blocking I/O will not be able to handle multiple connections in the same thread. This is because each I/O operation on a socket will block the processing of any other connection. The traditional approach to solving this problem is to use a separate thread (or process) to handle each concurrent connection.
+
+This way, a thread blocked on an I/O operation will not impact the availability of the other connections, because they are handled in seperate threads.
+
+The following illustrates this scenario:
+
