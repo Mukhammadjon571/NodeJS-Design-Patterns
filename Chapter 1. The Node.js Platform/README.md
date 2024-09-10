@@ -81,5 +81,45 @@ This way, a thread blocked on an I/O operation will not impact the availability 
 The following illustrates this scenario:
 <figure>
   <img src="images/01.png" width=500px>
-  <figcaption>Data structures hierarchy</figcaption>
+  <figcaption>Using multiple threads to process multiple connections</figcaption>
 </figure>
+
+This system lays emphasis on the amount of time each thread is idle and waiting for new data to be received from the associated connection. Now, if we also consider that any type of I/O can possibly block a request - for example, while interaction with databases or with the filesystem - we will soon realize how many times a thread has to block in order to wait for the result of an I/O operation. Unfortunately, a thread is not cheap in terms of system resources - it consumes memoery and causes context switches -  so having a long-running thread for each connection and not using it for most of the time means wasting precious memory and CPU cycles.
+
+## Non-Blocking I/O
+In addition to blocking I/O, most modern operating system support another mechanism to access resources, called non-blocking I/O. In this operating mode, the system call always returns immediately without waiting for the data to be read or written. If no results are available at the moment of the call, the function will simply return a predefined constant, indicating that there is no data available to return at that moment.
+
+For example, In Unix Operating systems, the `fcntl()` function is used to manipulate an existing file descriptor (which in Unix represents the reference used to access a local file or a network socket) to change its operating mode to non-blocking  (with the `O_NONBLOCK` flag). Once the resource is in non-blocking mode, any read operation will fail with the return code EAGAIN if the resource doesn`t have any data ready to be read.
+
+The most basic pattern for dealing with this type of non-blocking I/O is to actively poll the resource within a loop until some actual data is returned. This is called `busy-waiting`. The following pseudocode shows you how it`s possible to read from multiple resources using non-blocking I/O  and an active polling loop:
+
+```
+resources = [socketA, socketB, socketC]
+
+while(!resources.isEmpty()){
+  for(resource of resources){
+      //try to read
+      data = resource.read()
+      if(data === NO_DATA_AVAILABLE) {
+        continue
+      }
+
+      if(data === RESOURCE_CLOSED) {
+        resources.remove(i)
+      } else {
+        consumedData(data)
+      }
+  }
+}
+```
+
+As you can see, with this simple technique, it is possible to handle different resources in the same thread, but it`s still not efficient, In fact, in the preceding example, the loop will only consume precious CPU for iterating over resources that are unavailable most of the time. Polling algorithms usually result in a huge amount of wasted CPU time.
+
+## Event demultiplexing
+
+Busy-waiting is definitely not an ideal technique for processing non-blocking resources, but luckily, modern operating systems provide a native mechanism to handle concurrenct non-blocking resources in an efficient way. We are talking about the `synchronous event demultiplexer` (also known as the `event notification interface`)
+
+If you are unfamiliar with the term, in telecommunications, `multiplexing` refers to the method by which multiple signals are combined into one so that they can be easily transmitted over a medium with limited capacity.
+
+
+
