@@ -121,5 +121,11 @@ Busy-waiting is definitely not an ideal technique for processing non-blocking re
 
 If you are unfamiliar with the term, in telecommunications, `multiplexing` refers to the method by which multiple signals are combined into one so that they can be easily transmitted over a medium with limited capacity.
 
+**Demultiplexing** refers to the opposite operation, whereby the signal is split again into its original components. Both terms are used in other areas (for example, video processing) to describe the general operation of combining different things into one and vice versa.
+
+**The synchronous event demultiplexer** that we were talking about watches multiple resources and returns a new event (or set of events) when a read or write operation executed over one of those resources completes. the advantage here is that the synchronous event demultiplexer is, of course, synchronous, so it blocks until there are new events to process. The following is the pseudocode of an algorithm that uses a generic synchronous event demultiplexer to read from two different resources:
+
+
+
 
 
